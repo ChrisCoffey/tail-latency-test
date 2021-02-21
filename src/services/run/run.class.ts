@@ -9,7 +9,8 @@ export class Run extends Service {
   }
 
   async find(params?: Params) {
-    const size = 2000000
+    const start = process.hrtime.bigint()
+    const size = 250000
     const arr = new Array(size);
     for(var i=0; i< size; i++) {
       arr[i] = process.hrtime.bigint()
@@ -21,15 +22,17 @@ export class Run extends Service {
 
     arr.sort()
 
+    const end = process.hrtime.bigint()
+
     let res = {
-      median: Number.parseInt(arr[1000000])
-    , p75: Number.parseInt(arr[1500000])
-    , p90: Number.parseInt(arr[1800000])
-    , p99: Number.parseInt(arr[1980000])
+      median: Number.parseInt(arr[125000])
+    , p75: Number.parseInt(arr[187500])
+    , p90: Number.parseInt(arr[225000])
+    , p99: Number.parseInt(arr[247500])
+    , max: Number.parseInt(arr[249999])
+    , duration: Number.parseInt((end - start).toString())
     }
 
-    console.log(res)
-    console.log("returning")
     return [res]
   }
 }
