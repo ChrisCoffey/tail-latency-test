@@ -1,3 +1,12 @@
+import { HookContext } from '@feathersjs/feathers';
+
+const logError = () => {
+  return async (context: HookContext) => {
+    console.log("calling context.log", context.error)
+    return context;
+  }
+}
+
 
 export default {
   before: {
@@ -11,8 +20,8 @@ export default {
   },
 
   after: {
-    all: [],
-    find: [],
+    all: [logError()],
+    find: [logError()],
     get: [],
     create: [],
     update: [],
@@ -21,8 +30,8 @@ export default {
   },
 
   error: {
-    all: [],
-    find: [],
+    all: [logError()],
+    find: [logError()],
     get: [],
     create: [],
     update: [],

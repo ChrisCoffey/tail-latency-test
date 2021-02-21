@@ -8,24 +8,28 @@ export class Run extends Service {
     super(options);
   }
 
-  calculateGaps(timestamps: Array<number>): Array<number>{
-    if(timestamps.length =< 1) { return [] }
-
-    for(var i=0; i < timestamps.length -1; i++) {
-      timestamps[i] = timestamps[i+1] - timestamps[i]
-    }
-
-    return timestamps;
-  }
-
-  find(params?: Params) {
+  async find(params?: Params) {
     const size = 2000000
     const arr = new Array(size);
     for(var i=0; i< size; i++) {
-      arr[i] = Date.now();
+      arr[i] = process.hrtime.bigint()
     }
 
-    const gaps = calculateGaps(arr)
+    for(var i=0; i < arr.length - 2; i++) {
+      arr[i] = arr[i+1] - arr[i]
+    }
 
+    arr.sort()
+
+    let res = {
+      median: Number.parseInt(arr[1000000])
+    , p75: Number.parseInt(arr[1500000])
+    , p90: Number.parseInt(arr[1800000])
+    , p99: Number.parseInt(arr[1980000])
+    }
+
+    console.log(res)
+    console.log("returning")
+    return [res]
   }
 }
