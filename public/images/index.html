@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Page Template</title>
+        <script type="text/javascript" src="https://d3js.org/d3.v6.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+          const h = w = 700
+          const tree = "http://www.arborday.org/Shopping/Trees/graphics/oak/scarlet.jpg"
+
+
+          const images = Array(1000).fill().map ( () => {
+            const res = {
+              x: Math.floor(Math.random() * (w/2)),
+              y: Math.floor(Math.random() * (h/2)),
+              src: tree
+            }
+            res.pt = [res.x, res.y]
+            return res
+          })
+
+          const svg = d3.select("body")
+                        .append("svg")
+                        .attr("viewBox", [0, 0, w, h])
+
+          const g = svg.append("g") // Why is grouping everything within an element desireable?
+
+          g.selectAll("image")
+             .data(images)
+             .join("image") // What does join do?
+              .attr("transform", d => `translate(${d.pt})`) // does ordering matter?
+              .attr("x", (d)  => d.x)
+              .attr("y", (d)  => d.y)
+              .attr("height", 10)
+              .attr("width", 10)
+              .attr("href", (d) => d.src)
+
+          function zoomed({transform}) {
+            g.attr("transform", transform);
+          }
+
+            svg.call(d3.zoom()
+                .extent([[0, 0], [w, h]])
+                .scaleExtent([1, 20])
+                .on("zoom", zoomed));
+
+
+
+        </script>
+    </body>
+</html>

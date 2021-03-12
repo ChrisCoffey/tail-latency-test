@@ -2,12 +2,63 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>D3 Page Template</title>
+        <title>D3 Prototype</title>
         <script type="text/javascript" src="https://d3js.org/d3.v6.js"></script>
     </head>
     <body>
+        <style>
+          div.bar {
+            display: inline-block;
+            background-color: blue;
+            height: 75px;
+            width: 25px;
+            margin-right: 4px;
+          }
+
+          text.light {
+            font-color: gray;
+            font-size: 12;
+            align-text: middle;
+          }
+        </style>
         <script type="text/javascript">
-            d3.select("body").append("p").text("New paragraph!");
+            const dataset = [5,10,15,20,25]
+            const max_value = Math.max(...dataset)
+            const h = 100
+            const w = 500
+            const bar_padding = 3
+
+            const svg = d3.select("body")
+                          .append('svg')
+                          .attr("height", h)
+                          .attr("width", w)
+
+            const bar_width = (n) => { return w / (n + 1) }
+            const bar_height = (d) => { return d * (h/Math.max(max_value, 1))}
+            const bar_center = (i) => {
+                const _width = bar_width(dataset.length)
+                const start = i * (_width + bar_padding)
+                return start + _width / 2
+                }
+            svg.selectAll("circle")
+               .data(dataset)
+               .enter()
+               .append("rect")
+               .attr("x", (d, i) => { return i * (bar_width(dataset.length) + bar_padding)} )
+               .attr("y", (d) => {return h - bar_height(d)})
+               .attr("height", bar_height)
+               .attr("width", (d, i) => {return bar_width (dataset.length)})
+
+            svg.selectAll("text")
+              .data(dataset)
+              .enter()
+              .append("text")
+              .text((d) => { return d })
+              .attr("x", (d, i) => { return bar_center(i) } )
+              .attr("y", (d) => { return h - bar_height(d) + 15})
+              .attr("fill", "pink")
+              .attr("text-anchor", "middle")
+
         </script>
     </body>
 </html>
