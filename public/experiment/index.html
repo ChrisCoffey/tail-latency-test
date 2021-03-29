@@ -2,54 +2,118 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>D3 Prototype</title>
+        <title>Heroku workload analysis</title>
         <script type="text/javascript" src="https://d3js.org/d3.v6.js"></script>
     </head>
     <body>
       <script>
-        const h=w=700
+        const h=w=1200
+        const dataset = {
+           free: {file: "string_results_free.json", color: "blue", label: "Free"}
+          ,hobby: {file: "string_results_hobby.json", color: "orange", label: "Hobby"}
+          ,standard: {file: "string_results_standard1.json", color: "magenta", label: "Standard 1x"}
+          ,standardTwo: {file: "string_results_standard2x.json", color: "red", label: "Standard 2x"}
+          ,perfM: {file: "string_results_perf-m.json", color: "green", label: "Performance-M"}
+          ,perfL: {file: "string_results_perf-l.json", color: "cyan", label: "Performance-L"}
+          ,local: {file: "string_results_local.json", color: "steelblue", label: "Local (MBP)"}
+          }
 
-        var dataset = null
+        dataset.keys = Object.keys(dataset)
+
+        // local state for computing ranges
+        var med_min = Infinity
+        var med_max = -Infinity
+        var p90_min = Infinity
+        var p90_max = -Infinity
+        var min_gap = Infinity
+        var max_gap = -Infinity
+
         var x_scale = null
         var y_scale = null
         var radius_scale = null
 
-        d3.json("http://localhost:8000/string_results.json").then( (data) => {
-          console.log(data)
-          dataset = data
+        Promise.all(
+          // Fetch all the data
+          dataset.keys.map( (key) => {
+            return d3.json(`http://localhost:8000/${dataset[key].file}`)
+              .then( (data) => { dataset[key].data = data })
+          })
+        ).then(() => {
+          // determine the boundaries
+          dataset.keys.forEach( (key) => {
+            data = dataset[key].data
 
-          const ds_min = d3.min(dataset, (d) => { return d.duration})
-          const ds_max = d3.max(dataset, (d) => { return d.duration})
+            med_min = Math.min(med_min, d3.min(data, d => d.median/1000000))
+            med_max = Math.max(med_max, d3.max(data, d => d.median/1000000))
+            p90_min = Math.min(p90_min, d3.min(data, d => d.p90/1000000))
+            p90_max = Math.max(p90_max, d3.max(data, d => d.p90/1000000))
 
+            // TODO: compute a percentage gap?
+            min_gap = Math.min(min_gap, d3.min(data, d => d.p90/1000000 - d.median/1000000))
+            max_gap = Math.max(max_gap, d3.max(data, d => d.p90/1000000 - d.median/1000000))
+          })
+        }).then( () => {
+          // Generate scales
           x_scale = d3.scaleLinear()
-                      .domain([0, ds_max])
-                      .range([0, w])
+                      .domain([med_min, med_max])
+                      .range([80, w-5])
 
           y_scale = d3.scaleLinear()
-                      .domain([0, ds_max])
-                      .range([0, h])
+                      .domain([max_gap, min_gap])
+                      .range([20, h-20])
 
           radius_scale = d3.scaleLinear()
-                           .domain([0, ds_max])
-                           .range([1,20])
+                           .domain([p90_min, p90_max])
+                           .range([1,5])
         }).then( () => {
+          // Render the scatterplot
+          const xAxis = g => g
+            .attr("transform", `translate(0, ${h-20})`)
+            .call(d3.axisBottom(x_scale).tickFormat(d3.format("~s")))
+
+          const yAxis = g => g
+            .attr("transform", `translate(75, 0)`)
+            .call(d3.axisLeft(y_scale).tickFormat(d3.format("~s")))
+
           const svg = d3.select("body")
                         .append("svg")
                         .attr("viewBox", [0,0,h,w])
+                        .attr("height", h)
+                        .attr("width", w)
 
+          // adds the axes to the scatterplot
+          svg.append("g")
+            .call(xAxis)
+          svg.append("g")
+            .call(yAxis)
 
-          const g = svg.append("g")
-          g.selectAll("circle")
-            .data(dataset)
-            .enter().append("circle")
-              .attr("cx", (d) => { return x_scale(d.duration)  })
-              .attr("cy", (d) => { return y_scale(d.duration) })
-              .attr("r", (d) => { return radius_scale(d.p90) })
+          svg.selectAll("labels")
+            .data(dataset.keys)
+            .enter()
+            .append("text")
+              .attr("x", 120)
+              .attr("y", (key,i) => { return 100 + i*25})
+              .style("fill", (key) => { return dataset[key].color })
+              .text(key => dataset[key].label)
+              .attr("text-anchor", "left")
+              .style("alignment-baseline", "middle")
 
+          // add each dataset
+          dataset.keys.forEach( (key) => {
+            const g = svg.append("g")
+
+            const data = dataset[key].data
+
+            g.selectAll("circle")
+              .data(data)
+              .enter().append("circle")
+                .attr("cx", (d) => { return x_scale(d.median/1000000)  })
+                .attr("cy", (d) => { return y_scale(d.p90/1000000 - d.median/1000000) })
+                .attr("r", (d) => { return radius_scale(d.p90/1000000) })
+                .attr("stroke", dataset[key].color)
+                .attr("fill", dataset[key].color)
+          })
         })
-
-
-        // g.selectAll
       </script>
     </body>
 </html>
