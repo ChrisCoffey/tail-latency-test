@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Prototype</title>
+        <script type="text/javascript" src="https://d3js.org/d3.v6.js"></script>
+    </head>
+    <body>
+      <script>
+        const h=w=700
+
+        var dataset = null
+        var x_scale = null
+        var y_scale = null
+        var radius_scale = null
+
+        d3.json("http://localhost:8000/string_results.json").then( (data) => {
+          console.log(data)
+          dataset = data
+
+          const ds_min = d3.min(dataset, (d) => { return d.duration})
+          const ds_max = d3.max(dataset, (d) => { return d.duration})
+
+          x_scale = d3.scaleLinear()
+                      .domain([0, ds_max])
+                      .range([0, w])
+
+          y_scale = d3.scaleLinear()
+                      .domain([0, ds_max])
+                      .range([0, h])
+
+          radius_scale = d3.scaleLinear()
+                           .domain([0, ds_max])
+                           .range([1,20])
+        }).then( () => {
+          const svg = d3.select("body")
+                        .append("svg")
+                        .attr("viewBox", [0,0,h,w])
+
+
+          const g = svg.append("g")
+          g.selectAll("circle")
+            .data(dataset)
+            .enter().append("circle")
+              .attr("cx", (d) => { return x_scale(d.duration)  })
+              .attr("cy", (d) => { return y_scale(d.duration) })
+              .attr("r", (d) => { return radius_scale(d.p90) })
+
+        })
+
+
+        // g.selectAll
+      </script>
+    </body>
+</html>

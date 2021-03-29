@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Page Template</title>
+        <script type="text/javascript" src="https://d3js.org/d3.v6.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+          const random2dDataSet = () => {
+            const data = Array(25).fill().map( (_) => {
+              const x = Math.round(Math.random() * 50)
+              const y = Math.round(Math.random() * 50)
+              return [x,y]
+            })
+            return data
+          }
+          const h = w = 500
+
+          const svg = d3.select("body")
+                        .append("svg")
+                        .attr("height", h)
+                        .attr("width", w)
+
+          const dataset = random2dDataSet()
+          const max_x = Math.max(...dataset.map((d) => {return d[0]}))
+          const max_y = Math.max(...dataset.map((d) => {return d[1]}))
+
+          const center_x = (d) => { return d * (w / max_x) - 15}
+          const center_y = (d) => { return d * (h / max_y) - 15}
+          // radius is the sqrt of the data value to make the circle's size proportional to area
+          const radius = (d) => { return Math.sqrt(Math.abs(d[0] + d[1])) }
+
+          svg.selectAll("circle")
+            .data(dataset)
+            .enter()
+            .append("circle")
+            .attr("cx", (d) => {return center_x(d[0]) } )
+            .attr("cy", (d) => {return center_y(d[1]) } )
+            .attr("r", radius)
+
+          svg.selectAll("text")
+            .data(dataset)
+            .enter()
+            .append("text")
+            .text((d) => { return `${d[0]}, ${d[1]}`})
+            .attr("x", (d) => { return center_x(d[0]) })
+            .attr("y", (d) => { return center_y(d[1]) })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "11px")
+            .attr("fill", "red")
+
+
+        </script>
+    </body>
+</html>
