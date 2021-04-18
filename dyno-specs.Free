@@ -1,0 +1,80 @@
+Username changes each time a dyno is launched. Suggests that `ulimit` could be sufficient for controlling the dyno resources
+
+uname -a:
+  Linux 29f71107-e165-49ed-b322-5c76d32f0cd6 4.4.0-1088-aws #92-Ubuntu SMP Wed Mar 17 04:02:59 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+
+`cat /proc/cpuinfo`:
+  processor	: 8 (of 8)
+  vendor_id	: GenuineIntel
+  cpu family	: 6
+  model		: 62
+  model name	: Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
+  stepping	: 4
+  microcode	: 0x42e
+  cpu MHz		: 2494.046
+  cache size	: 25600 KB
+  physical id	: 0
+  siblings	: 8
+  core id		: 3
+  cpu cores	: 4
+  apicid		: 7
+  initial apicid	: 7
+  fpu		: yes
+  fpu_exception	: yes
+  cpuid level	: 13
+  wp		: yes
+  flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm kaiser fsgsbase smep erms xsaveopt
+  bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit
+  bogomips	: 4988.09
+  clflush size	: 64
+  cache_alignment	: 64
+  address sizes	: 46 bits physical, 48 bits virtual
+  power management:
+
+
+~ $ cat /proc/meminfo
+MemTotal:       62914728 kB
+MemFree:         5395880 kB
+MemAvailable:   18559028 kB
+Buffers:         1591412 kB
+Cached:         10517796 kB
+SwapCached:       663912 kB
+Active:         30546736 kB
+Inactive:       21264340 kB
+Active(anon):   24951672 kB
+Inactive(anon): 14848112 kB
+Active(file):    5595064 kB
+Inactive(file):  6416228 kB
+Unevictable:           0 kB
+Mlocked:               0 kB
+SwapTotal:      63963132 kB
+SwapFree:       62619160 kB
+Dirty:            826880 kB
+Writeback:           480 kB
+AnonPages:      39468104 kB
+Mapped:          1850096 kB
+Shmem:             96804 kB
+Slab:            2022160 kB
+SReclaimable:    1668744 kB
+SUnreclaim:       353416 kB
+KernelStack:      123264 kB
+PageTables:       378680 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:    95420496 kB
+Committed_AS:   140521196 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:  12937216 kB
+CmaTotal:              0 kB
+CmaFree:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:     4380672 kB
+DirectMap2M:    59619328 kB

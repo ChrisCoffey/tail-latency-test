@@ -1,0 +1,79 @@
+uname -a:
+  Linux d1339ca1-2099-4802-96f9-adf657955208 4.4.0-1088-aws #92-Ubuntu SMP Wed Mar 17 04:02:59 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+
+
+cat /proc/cpuinfo
+processor	: 7
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 62
+model name	: Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
+stepping	: 4
+microcode	: 0x42e
+cpu MHz		: 2494.032
+cache size	: 25600 KB
+physical id	: 0
+siblings	: 8
+core id		: 3
+cpu cores	: 4
+apicid		: 7
+initial apicid	: 7
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm kaiser fsgsbase smep erms xsaveopt
+bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit
+bogomips	: 4988.06
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+cat /proc/meminfo
+~ $ cat /proc/meminfo
+MemTotal:       62914728 kB
+MemFree:         4984728 kB
+MemAvailable:   31156660 kB
+Buffers:         2229460 kB
+Cached:         20388024 kB
+SwapCached:       159776 kB
+Active:         28167192 kB
+Inactive:       22243260 kB
+Active(anon):   17737364 kB
+Inactive(anon): 10141096 kB
+Active(file):   10429828 kB
+Inactive(file): 12102164 kB
+Unevictable:           0 kB
+Mlocked:               0 kB
+SwapTotal:      63963132 kB
+SwapFree:       63456864 kB
+Dirty:            357172 kB
+Writeback:           272 kB
+AnonPages:      27706424 kB
+Mapped:          1340660 kB
+Shmem:             85616 kB
+Slab:            4489488 kB
+SReclaimable:    4156828 kB
+SUnreclaim:       332660 kB
+KernelStack:      118016 kB
+PageTables:       311320 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:    95420496 kB
+Committed_AS:   128891376 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:  11042816 kB
+CmaTotal:              0 kB
+CmaFree:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:     4214784 kB
+DirectMap2M:    59785216 kB
