@@ -7,15 +7,16 @@
     </head>
     <body>
       <script>
-        const h=w=1200
+        const h=1200;
+        const w=1400
         const dataset = {
-           free: {file: "string_results_free.json", color: "blue", label: "Free"}
-          ,hobby: {file: "string_results_hobby.json", color: "orange", label: "Hobby"}
-          ,standard: {file: "string_results_standard1.json", color: "magenta", label: "Standard 1x"}
+           free: {file: "string_results_free.json", color: "purple", label: "Free"}
+          ,hobby: {file: "string_results_hobby.json", color: "#ffa600", label: "Hobby"}
+          ,standard: {file: "string_results_standard1.json", color: "cyan", label: "Standard 1x"}
           ,standardTwo: {file: "string_results_standard2x_2.json", color: "red", label: "Standard 2x"}
-          ,perfM: {file: "string_results_perf-m.json", color: "green", label: "Performance-M"}
-          ,perfL: {file: "string_results_perf-l.json", color: "cyan", label: "Performance-L"}
-          ,local: {file: "string_results_local.json", color: "steelblue", label: "Local (MBP)"}
+          ,perfM: {file: "string_results_perf-m.json", color: "blue", label: "Performance-M"}
+          ,perfL: {file: "string_results_perf-l.json", color: "#ff764a", label: "Performance-L"}
+          ,local: {file: "string_results_local.json", color: "#374c80", label: "Local (MBP)"}
           }
 
         dataset.keys = Object.keys(dataset)
@@ -35,7 +36,7 @@
         Promise.all(
           // Fetch all the data
           dataset.keys.map( (key) => {
-            return d3.json(`http://localhost:8000/${dataset[key].file}`)
+            return d3.json(`/${dataset[key].file}`)
               .then( (data) => { dataset[key].data = data })
           })
         ).then(() => {
@@ -84,8 +85,21 @@
           // adds the axes to the scatterplot
           svg.append("g")
             .call(xAxis)
+          svg.append("text")
+            .attr("x", w/2)
+            .attr("y", h+30)
+            .attr("font-size", "x-large")
+            .text("median batch run (ms)")
+
           svg.append("g")
             .call(yAxis)
+          svg.append("text")
+            .attr("y", 10)
+            .attr("x", -(w/2))
+            .attr("font-size", "x-large")
+            .attr("transform", "rotate(-90)")
+            .text("gap between median and 90th percentile (ms)")
+
 
           svg.selectAll("labels")
             .data(dataset.keys)
@@ -96,6 +110,7 @@
               .style("fill", (key) => { return dataset[key].color })
               .text(key => dataset[key].label)
               .attr("text-anchor", "left")
+              .attr("font-size", "20px")
               .style("alignment-baseline", "middle")
 
           // add each dataset
@@ -104,7 +119,7 @@
 
             const data = dataset[key].data
 
-            g.selectAll("circle")
+            const node = g.selectAll("circle")
               .data(data)
               .enter().append("circle")
                 .attr("cx", (d) => { return x_scale(d.median/1000000)  })
@@ -112,7 +127,31 @@
                 .attr("r", (d) => { return radius_scale(d.p90/1000000) })
                 .attr("stroke", dataset[key].color)
                 .attr("fill", dataset[key].color)
+                .on("mouseover", onEnter)
+                .on("mouseout", onExit)
+                .each(function(d){ d.circle = this })
+
+            node.append("title")
+              .text(d => `${key}
+
+median: ${d.median / 1000000}
+min: ${d.min/ 1000000}
+max: ${d.maximum/ 1000000}
+p90: ${d.p90/ 1000000}
+gap: ${(d.p90 - d.median)/1000000}`)
+
           })
+
+          function onEnter(_, d) {
+            console.log("onEnter", d)
+            d3.select(d.circle).attr("r", "10")
+          }
+
+          function onExit(_, d) {
+            console.log("onExit", d)
+            d3.select(d.circle).attr("r", radius_scale(d.p90/ 1000000))
+          }
+
         })
       </script>
     </body>
