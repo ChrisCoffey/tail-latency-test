@@ -22,12 +22,8 @@
         dataset.keys = Object.keys(dataset)
 
         // local state for computing ranges
-        var med_min = Infinity
-        var med_max = -Infinity
-        var p90_min = Infinity
-        var p90_max = -Infinity
-        var min_gap = Infinity
-        var max_gap = -Infinity
+        var med_min = p90_min = min_gap = Infinity
+        var med_max = p90_max = max_gap = -Infinity
 
         var x_scale = null
         var y_scale = null
@@ -132,7 +128,7 @@
                 .each(function(d){ d.circle = this })
 
             node.append("title")
-              .text(d => `${key}
+              .text(d => `${dataset[key].label}
 
 median: ${d.median / 1000000}
 min: ${d.min/ 1000000}
@@ -143,12 +139,10 @@ gap: ${(d.p90 - d.median)/1000000}`)
           })
 
           function onEnter(_, d) {
-            console.log("onEnter", d)
             d3.select(d.circle).attr("r", "10")
           }
 
           function onExit(_, d) {
-            console.log("onExit", d)
             d3.select(d.circle).attr("r", radius_scale(d.p90/ 1000000))
           }
 
